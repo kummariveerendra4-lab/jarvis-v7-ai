@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JARVIS V7</title>
+<style>
+body{font-family:Arial,sans-serif;background:#10131b;color:#fff;margin:0;padding:20px}
+main{max-width:600px;margin:auto}
+h1{color:#66d9ff}
+#chat{height:55vh;overflow:auto;border:1px solid #444;border-radius:12px;padding:12px}
+p{padding:10px;background:#202737;border-radius:8px;overflow-wrap:anywhere}
+input,button{font-size:16px;padding:12px;border-radius:8px;margin-top:8px}
+input{box-sizing:border-box;width:100%}
+button{background:#087fa5;color:white;border:0}
+small{color:#bbb}
+</style>
+</head>
+<body>
+<main>
+<h1>JARVIS V7</h1>
+<small>Personal assistant • Mobile edition</small>
+<div id="chat" aria-live="polite">
+<p><b>JARVIS:</b> Hello! I'm ready. This interface needs a secure backend to use real AI.</p>
+</div>
+<form id="form">
+<input id="message" placeholder="Ask JARVIS something..." autocomplete="off" required>
+<button type="submit">Send</button>
+</form>
+</main>
+<script>
+const chat=document.getElementById('chat');
+document.getElementById('form').addEventListener('submit',function(e){
+e.preventDefault();
+const input=document.getElementById('message');
+const text=input.value.trim();
+if(!text)return;
+const p=document.createElement('p');
+p.textContent='You: '+text;
+chat.appendChild(p);
+const reply=document.createElement('p');
+reply.textContent='JARVIS: Your interface is working, but real AI is not connected yet. A secure backend is needed for AI answers.';
+chat.appendChild(reply);
+input.value='';
+chat.scrollTop=chat.scrollHeight;
+});
+</script>
+</body>
+</html>
+
