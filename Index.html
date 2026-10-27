@@ -43,15 +43,12 @@ function addMessage(sender, text) {
 }
 
 function speak(text) {
-    if (!('speechSynthesis' in window)) {
-        addMessage('JARVIS', 'Speech is not supported in this browser.');
-        return;
-    }
+    if (!('speechSynthesis' in window)) return;
 
     window.speechSynthesis.cancel();
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-IN';
-    utterance.rate = 1;
     window.speechSynthesis.speak(utterance);
 }
 
@@ -67,7 +64,9 @@ form.addEventListener('submit', async function(event) {
     try {
         const response = await fetch('/chat', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ message })
         });
 
@@ -77,43 +76,42 @@ form.addEventListener('submit', async function(event) {
 
         addMessage('JARVIS', reply);
         speak(reply);
+
     } catch (error) {
-        addMessage('JARVIS', 'I cannot connect to the server right now.');
+        addMessage('JARVIS',
+            'I cannot connect to the server right now.');
     }
 });
 
-const micButton = document.getElementById('mic');
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
 
-if (micButton) {
-    const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
+document.getElementById('mic').addEventListener('click', function() {
+    if (!SpeechRecognition) {
+        addMessage('JARVIS',
+            'Voice recognition is not supported in this browser.');
+        return;
+    }
 
-    micButton.addEventListener('click', function() {
-        if (!SpeechRecognition) {
-            addMessage('JARVIS',
-                'Voice recognition is not supported in this browser.');
-            return;
-        }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    recognition.interimResults = false;
 
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-IN';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
+    recognition.onresult = function(event) {
+        messageInput.value =
+            event.results[0][0].transcript;
+        form.requestSubmit();
+    };
 
-        recognition.onresult = function(event) {
-            messageInput.value =
-                event.results[0][0].transcript;
-            form.requestSubmit();
-        };
+    recognition.onerror = function() {
+        addMessage('JARVIS',
+            'Microphone error. Check browser permissions.');
+    };
 
-        recognition.onerror = function() {
-            addMessage('JARVIS',
-                'Microphone error. Check browser microphone permission.');
-        };
+    recognition.start();
+});
 
-        recognition.start();
-    });
-}
 </script>
 </body>
 </html>
