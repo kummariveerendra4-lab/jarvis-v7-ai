@@ -30,20 +30,55 @@ small{color:#bbb}
 </form>
 </main>
 <script>
-const chat=document.getElementById('chat');
-document.getElementById('form').addEventListener('submit',function(e){
-e.preventDefault();
-const input=document.getElementById('message');
-const text=input.value.trim();
-if(!text)return;
-const p=document.createElement('p');
-p.textContent='You: '+text;
-chat.appendChild(p);
-const reply=document.createElement('p');
-reply.textContent='JARVIS: Your interface is working, but real AI is not connected yet. A secure backend is needed for AI answers.';
-chat.appendChild(reply);
-input.value='';
-chat.scrollTop=chat.scrollHeight;
+const chat = document.getElementById('chat');
+const form = document.getElementById('form');
+const input = document.getElementById('message');
+
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const text = input.value.trim();
+    if (!text) return;
+
+    const userMessage = document.createElement('p');
+    userMessage.textContent = 'You: ' + text;
+    chat.appendChild(userMessage);
+
+    input.value = '';
+
+    const reply = document.createElement('p');
+    reply.textContent = 'JARVIS: Thinking...';
+    chat.appendChild(reply);
+
+    try {
+        const response = await fetch(
+            'https://jarvis-v7-ai.onrender.com/chat',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: text
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.reply) {
+            reply.textContent = 'JARVIS: ' + data.reply;
+        } else {
+            reply.textContent = 'JARVIS: ' + JSON.stringify(data);
+        }
+
+    } catch (error) {
+        console.error(error);
+        reply.textContent =
+            'JARVIS: Could not connect to the backend.';
+    }
+
+    chat.scrollTop = chat.scrollHeight;
 });
 </script>
 </body>
