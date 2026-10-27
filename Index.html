@@ -30,56 +30,89 @@ small{color:#bbb}
 </form>
 </main>
 <script>
-const chat = document.getElementById('chat');
 const form = document.getElementById('form');
-const input = document.getElementById('message');
+const messageInput = document.getElementById('message');
+const chat = document.getElementById('chat');
 
-form.addEventListener('submit', async function(e) {
-    e.preventDefault();
+function addMessage(sender, text) {
+    const item = document.createElement('p');
+    item.textContent = sender + ': ' + text;
+    chat.appendChild(item);
+    chat.scrollTop = chat.scrollHeight;
+}
 
-    const text = input.value.trim();
-    if (!text) return;
-
-    const userMessage = document.createElement('p');
-    userMessage.textContent = 'You: ' + text;
-    chat.appendChild(userMessage);
-
-    input.value = '';
-
-    const reply = document.createElement('p');
-    reply.textContent = 'JARVIS: Thinking...';
-    chat.appendChild(reply);
-
-    try {
-        const response = await fetch(
-            'https://jarvis-v7-ai.onrender.com/chat',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: text
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (data.reply) {
-            reply.textContent = 'JARVIS: ' + data.reply;
-        } else {
-            reply.textContent = 'JARVIS: ' + JSON.stringify(data);
-        }
-
-    } catch (error) {
-        console.error(error);
-        reply.textContent =
-            'JARVIS: Could not connect to the backend.';
+function speak(text) {
+    if (!('speechSynthesis' in window)) {
+        addMessage('JARVIS', 'Speech is not supported in this browser.');
+        return;
     }
 
-    chat.scrollTop = chat.scrollHeight;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-IN';
+    utterance.rate = 1;
+    window.speechSynthesis.speak(utterance);
+}
+
+form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    addMessage('You', message);
+    messageInput.value = '';
+
+    try {
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        const reply = data.reply || data.error ||
+            'I could not get a response.';
+
+        addMessage('JARVIS', reply);
+        speak(reply);
+    } catch (error) {
+        addMessage('JARVIS', 'I cannot connect to the server right now.');
+    }
 });
+
+const micButton = document.getElementById('mic');
+
+if (micButton) {
+    const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    micButton.addEventListener('click', function() {
+        if (!SpeechRecognition) {
+            addMessage('JARVIS',
+                'Voice recognition is not supported in this browser.');
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-IN';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = function(event) {
+            messageInput.value =
+                event.results[0][0].transcript;
+            form.requestSubmit();
+        };
+
+        recognition.onerror = function() {
+            addMessage('JARVIS',
+                'Microphone error. Check browser microphone permission.');
+        };
+
+        recognition.start();
+    });
+}
 </script>
 </body>
 </html>
