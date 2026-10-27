@@ -72,7 +72,7 @@ const server = http.createServer((req, res) => {
                 }
 
                 const response = await client.responses.create({
-                    model: 'gpt-6-luna',
+                    model: 'gpt-5.5',
                     input: message
                 });
 
