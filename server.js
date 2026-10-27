@@ -1,12 +1,17 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const OpenAI = require('openai');
 
 const PORT = process.env.PORT || 3000;
 
+const client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
+
 const server = http.createServer((req, res) => {
 
-    // Open the JARVIS website
+    // JARVIS webpage
     if (req.method === 'GET' && req.url === '/') {
         const filePath = path.join(__dirname, 'Index.html');
 
@@ -15,14 +20,13 @@ const server = http.createServer((req, res) => {
                 res.writeHead(500, {
                     'Content-Type': 'text/plain'
                 });
-                res.end('Could not load index.html');
+                res.end('Could not load Index.html');
                 return;
             }
 
             res.writeHead(200, {
                 'Content-Type': 'text/html'
             });
-
             res.end(data);
         });
 
@@ -38,13 +42,13 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({
             status: 'ok',
             assistant: 'JARVIS V7',
-            aiConnected: false
+            aiConnected: Boolean(process.env.OPENAI_API_KEY)
         }));
 
         return;
     }
 
-    // Chat endpoint
+    // AI chat
     if (req.method === 'POST' && req.url === '/chat') {
         let body = '';
 
@@ -52,25 +56,43 @@ const server = http.createServer((req, res) => {
             body += chunk;
         });
 
-        req.on('end', () => {
+        req.on('end', async () => {
             try {
                 const data = JSON.parse(body);
+                const message = data.message;
+
+                if (typeof message !== 'string' || !message.trim()) {
+                    res.writeHead(400, {
+                        'Content-Type': 'application/json'
+                    });
+                    res.end(JSON.stringify({
+                        error: 'Message is required'
+                    }));
+                    return;
+                }
+
+                const response = await client.responses.create({
+                    model: 'gpt-6-luna',
+                    input: message
+                });
 
                 res.writeHead(200, {
                     'Content-Type': 'application/json'
                 });
 
                 res.end(JSON.stringify({
-                    reply: 'JARVIS received: ' + data.message
+                    reply: response.output_text
                 }));
 
             } catch (error) {
-                res.writeHead(400, {
+                console.error(error);
+
+                res.writeHead(500, {
                     'Content-Type': 'application/json'
                 });
 
                 res.end(JSON.stringify({
-                    error: 'Invalid request'
+                    error: 'AI request failed'
                 }));
             }
         });
@@ -78,7 +100,6 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Anything else
     res.writeHead(404, {
         'Content-Type': 'application/json'
     });
