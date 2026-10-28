@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
 
     // JARVIS webpage
     if (req.method === 'GET' && req.url === '/') {
-        const filePath = path.join(__dirname, 'Index.html');
+        const filePath = path.join(__dirname, 'index.html');
 
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
