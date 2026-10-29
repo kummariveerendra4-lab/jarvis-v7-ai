@@ -1,3 +1,4 @@
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -10,45 +11,30 @@ const client = new OpenAI({
 });
 
 const server = http.createServer((req, res) => {
-console.log('REQUEST:', req.method, req.url);
-console.log('URL JSON:', JSON.stringify(req.url));
+    console.log('REQUEST:', req.method, req.url);
 
-    // JARVIS webpage
+    // JARVIS homepage
     if (req.method === 'GET' && req.url === '/') {
-console.log('HOME ROUTE MATCHED');
         const filePath = path.join(__dirname, 'Index.html');
-console.log('HTML PATH:', filePath);
 
-        
-fs.readFile(filePath, 'utf8', (err, data) => {
-    if (err) {
-        console.log('HTML READ ERROR:', err.message);
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                console.error('HTML READ ERROR:', err.message);
 
-        res.writeHead(500, {
-            'Content-Type': 'text/plain'
-        });
-        res.end('Could not load Index.html');
-        return;
-    }
+                if (!res.headersSent) {
+                    res.writeHead(500, {
+                        'Content-Type': 'text/plain'
+                    });
+                }
 
-    console.log('HTML READ SUCCESS:', data.length, 'characters');
-
-    res.writeHead(200, {
-        'Content-Type': 'text/html'
-    });
-    res.end(data);
-});
-
-                res.writeHead(500, {
-                    'Content-Type': 'text/plain'
-                });
-                res.end('Could not load Index.html');
+                res.end('Could not load Index.html. Check its filename.');
                 return;
             }
 
             res.writeHead(200, {
-                'Content-Type': 'text/html'
+                'Content-Type': 'text/html; charset=utf-8'
             });
+
             res.end(data);
         });
 
@@ -64,7 +50,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         res.end(JSON.stringify({
             status: 'ok',
             assistant: 'JARVIS V7',
-            aiConnected: Boolean(process.env.OPENAI_API_KEY)
+            aiConfigured: Boolean(process.env.OPENAI_API_KEY)
         }));
 
         return;
@@ -76,6 +62,10 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 
         req.on('data', chunk => {
             body += chunk;
+
+            if (body.length > 100000) {
+                req.destroy();
+            }
         });
 
         req.on('end', async () => {
@@ -83,13 +73,28 @@ fs.readFile(filePath, 'utf8', (err, data) => {
                 const data = JSON.parse(body);
                 const message = data.message;
 
-                if (typeof message !== 'string' || !message.trim()) {
+                if (typeof message !== 'string' ||
+                    !message.trim()) {
                     res.writeHead(400, {
                         'Content-Type': 'application/json'
                     });
+
                     res.end(JSON.stringify({
                         error: 'Message is required'
                     }));
+
+                    return;
+                }
+
+                if (!process.env.OPENAI_API_KEY) {
+                    res.writeHead(503, {
+                        'Content-Type': 'application/json'
+                    });
+
+                    res.end(JSON.stringify({
+                        error: 'AI API key is not configured'
+                    }));
+
                     return;
                 }
 
@@ -107,14 +112,16 @@ fs.readFile(filePath, 'utf8', (err, data) => {
                 }));
 
             } catch (error) {
-                console.error(error);
+                console.error('CHAT ERROR:', error.message);
 
-                res.writeHead(500, {
-                    'Content-Type': 'application/json'
-                });
+                if (!res.headersSent) {
+                    res.writeHead(500, {
+                        'Content-Type': 'application/json'
+                    });
+                }
 
                 res.end(JSON.stringify({
-                    error: 'AI request failed'
+                    error: 'AI request failed. Check Render logs and API quota.'
                 }));
             }
         });
@@ -122,6 +129,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         return;
     }
 
+    // Unknown route
     res.writeHead(404, {
         'Content-Type': 'application/json'
     });
