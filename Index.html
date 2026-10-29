@@ -71,11 +71,20 @@ form.addEventListener('submit', async function(event) {
         });
 
         const data = await response.json();
-        const reply = data.reply || data.error ||
-            'I could not get a response.';
 
-        addMessage('JARVIS', reply);
-        speak(reply);
+if (!response.ok) {
+    addMessage(
+        'JARVIS',
+        'AI service error (' + response.status + '): ' +
+        (data.error || 'Please try again later.')
+    );
+    return;
+}
+
+const reply = data.reply || 'I could not get a response.';
+addMessage('JARVIS', reply);
+speak(reply);                
+        
 
     } catch (error) {
         addMessage('JARVIS',
