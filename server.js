@@ -6,7 +6,7 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 // Read the API key using your exact variable name.
-const getGeminiKey = () => process.env['GEMINI API KEY'];
+const getGeminiKey = () => process.env['GEMINI_API_KEY'];
 
 const server = http.createServer((req, res) => {
     console.log('REQUEST:', req.method, req.url);
