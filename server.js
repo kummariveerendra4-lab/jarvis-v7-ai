@@ -40,7 +40,7 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({
             status: 'ok',
             assistant: 'JARVIS V7',
-            aiConfigured: Boolean(process.env.GEMINI_API_KEY)
+            aiConfigured: Boolean(process.env.['GEMINI API KEY'])
         }));
 
         return;
