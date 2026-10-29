@@ -1,3 +1,4 @@
+
 {
   "name": "jarvis-v7-ai",
   "version": "1.0.0",
@@ -6,6 +7,6 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "openai": "^6.0.0"
+    "@google/genai": "^2.31.0"
   }
 }
