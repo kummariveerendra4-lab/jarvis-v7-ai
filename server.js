@@ -17,6 +17,7 @@ console.log('URL JSON:', JSON.stringify(req.url));
     if (req.method === 'GET' && req.url === '/') {
 console.log('HOME ROUTE MATCHED');
         const filePath = path.join(__dirname, 'Index.html');
+console.log('HTML PATH:', filePath);
 
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
