@@ -15,6 +15,7 @@ console.log('URL JSON:', JSON.stringify(req.url));
 
     // JARVIS webpage
     if (req.method === 'GET' && req.url === '/') {
+console.log('HOME ROUTE MATCHED');
         const filePath = path.join(__dirname, 'Index.html');
 
         fs.readFile(filePath, 'utf8', (err, data) => {
