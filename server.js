@@ -19,8 +19,26 @@ console.log('HOME ROUTE MATCHED');
         const filePath = path.join(__dirname, 'Index.html');
 console.log('HTML PATH:', filePath);
 
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
+        
+fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+        console.log('HTML READ ERROR:', err.message);
+
+        res.writeHead(500, {
+            'Content-Type': 'text/plain'
+        });
+        res.end('Could not load Index.html');
+        return;
+    }
+
+    console.log('HTML READ SUCCESS:', data.length, 'characters');
+
+    res.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    res.end(data);
+});
+
                 res.writeHead(500, {
                     'Content-Type': 'text/plain'
                 });
