@@ -10,6 +10,7 @@ const client = new OpenAI({
 });
 
 const server = http.createServer((req, res) => {
+console.log('REQUEST:', req.method, req.url);
 
     // JARVIS webpage
     if (req.method === 'GET' && req.url === '/') {
