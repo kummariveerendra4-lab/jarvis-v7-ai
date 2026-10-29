@@ -15,7 +15,7 @@ const sleep = ms =>
 async function askGemini(message) {
   let lastError = "Gemini request failed.";
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  for (let attempt = 1; attempt <= 2; attempt++) {
     try {
       const response = await fetch(GEMINI_URL, {
         method: "POST",
@@ -86,7 +86,7 @@ async function askGemini(message) {
     }
 
     if (attempt < 3) {
-      await sleep(attempt * 2000);
+      await sleep(1000);
     }
   }
 
