@@ -200,4 +200,4 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`JARVIS V7 running on port ${PORT}`);
-});
+}); 
