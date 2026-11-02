@@ -23,6 +23,38 @@ const loginAttempts = new Map();
 const chatAttempts = new Map();
 
 // Gemini AI connection
+
+function getLocalReply(message) {
+  const text = message.toLowerCase().trim()
+    .replace(/[.!?]+$/, "");
+
+  if (/^(hi|hello|hey|hii|good morning|good evening)$/.test(text)) {
+    return "Hello! I am JARVIS V7. My local assistant system is online. How can I help you?";
+  }
+
+  if (text.includes("who are you")) {
+    return "I am JARVIS V7, your personal AI assistant.";
+  }
+
+  if (text.includes("how are you")) {
+    return "I am functioning normally. My local assistant system is ready.";
+  }
+
+  if (text.includes("what can you do")) {
+    return "I can communicate with you, answer selected basic questions and assist with general information.";
+  }
+
+  if (text.includes("artificial intelligence")) {
+    return "Artificial intelligence is a branch of computer science that enables machines to perform tasks that normally require human intelligence.";
+  }
+
+  if (text.includes("electric current")) {
+    return "Electric current is the rate of flow of electric charge through a conductor. Its SI unit is the ampere.";
+  }
+
+  return null;
+}
+
 async function askGemini(message) {
   let lastError;
 
