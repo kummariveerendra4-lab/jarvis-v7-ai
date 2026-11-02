@@ -2,7 +2,7 @@
 {
   "name": "jarvis-v7-ai",
   "version": "1.0.0",
-  "description": "JARVIS V7 AI Assistant",
+  "description": "JARVIS V7 Personal AI Assistant",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
