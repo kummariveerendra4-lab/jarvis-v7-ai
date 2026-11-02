@@ -1,13 +1,9 @@
-
 {
   "name": "jarvis-v7-ai",
   "version": "1.0.0",
-  "description": "JARVIS V7 Personal AI Assistant",
-  "main": "server.js",
+  "private": true,
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": ">=18"
-  }
+  "dependencies": {}
 }
