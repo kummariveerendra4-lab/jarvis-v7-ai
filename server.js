@@ -461,7 +461,7 @@ location.replace("/");
       }
 
       try {
-        const reply = await 
+        
 const localReply = getLocalReply(message);
 
 if (localReply) {
