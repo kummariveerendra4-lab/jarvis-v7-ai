@@ -54,6 +54,25 @@ function getLocalReply(message) {
   if (text.includes("electric current")) {
     return "Electric current is the rate of flow of electric charge through a conductor. Its SI unit is the ampere.";
   }
+  if (text.includes("voltage")) {
+    return "Voltage is the electrical potential difference between two points. Its SI unit is volt (V).";
+  }
+
+  if (text.includes("resistance")) {
+    return "Resistance is the opposition offered by a material to the flow of electric current. Its SI unit is ohm (Ω).";
+  }
+
+  if (text.includes("ohm's law") || text.includes("ohms law")) {
+    return "Ohm's Law states that voltage equals current multiplied by resistance. V = I × R.";
+  }
+
+  if (text.includes("electrical power")) {
+    return "Electrical power is the rate at which electrical energy is transferred. Its SI unit is watt (W).";
+  }
+
+  if (text.includes("difference between ac and dc") || text.includes("ac and dc")) {
+    return "AC periodically changes direction, while DC flows in one direction.";
+  }
 
   return null;
 }
@@ -139,15 +158,33 @@ function getLocalReply(message) {
   }
 
   if (text.includes("who are you")) {
-    return "I'm JARVIS V7, your personal AI assistant.";
+    return "I'm JARVIS V7, your personal AI assistant.";}
+  if (
+    text.includes("electric current") ||
+    text.includes("what is current") ||
+    text.includes("define current")
+  ) {
+    return "Electric current is the rate of flow of electric charge through a conductor. Its SI unit is ampere (A).";
   }
 
-if (
-  text.includes("electric current") ||
-  text.includes("what is current") ||
-  text.includes("define current")
-) {
-    return "Electric current is the rate of flow of electric charge through a conductor. Its SI unit is ampere (A).";
+  if (text.includes("voltage")) {
+    return "Voltage is the electrical potential difference between two points. Its SI unit is volt (V).";
+  }
+
+  if (text.includes("resistance")) {
+    return "Resistance is the opposition offered by a material to the flow of electric current. Its SI unit is ohm (Ω).";
+  }
+
+  if (text.includes("ohm's law") || text.includes("ohms law")) {
+    return "Ohm's Law states that voltage equals current multiplied by resistance. V = I × R.";
+  }
+
+  if (text.includes("electrical power")) {
+    return "Electrical power is the rate at which electrical energy is transferred. Its SI unit is watt (W).";
+  }
+
+  if (text.includes("difference between ac and dc") || text.includes("ac and dc")) {
+    return "AC periodically changes direction, while DC flows in one direction.";
   }
 
   return null;
