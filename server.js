@@ -32,7 +32,10 @@ function getLocalReply(message) {
     return "Hello! I am JARVIS V7. My local assistant system is online. How can I help you?";
   }
 
-  if (text.includes("who are you")) {
+ if (
+  text.includes("who are you") ||
+  text.includes("introduce yourself")
+) {
     return "I am JARVIS V7, your personal AI assistant.";
   }
 
@@ -139,7 +142,11 @@ function getLocalReply(message) {
     return "I'm JARVIS V7, your personal AI assistant.";
   }
 
-  if (text.includes("electric current")) {
+if (
+  text.includes("electric current") ||
+  text.includes("what is current") ||
+  text.includes("define current")
+) {
     return "Electric current is the rate of flow of electric charge through a conductor. Its SI unit is ampere (A).";
   }
 
