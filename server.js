@@ -123,6 +123,28 @@ async function askGemini(message) {
   throw lastError;
 }
 
+// JARVIS LOCAL RESPONSE SYSTEM
+function getLocalReply(message) {
+  const text = message.toLowerCase().trim();
+
+  if (/^(hi|hello|hey|hi jarvis|hello jarvis)[!. ]*$/.test(text)) {
+    return "Hello! I'm JARVIS V7. I'm here and ready to help you.";
+  }
+
+  if (text.includes("how are you")) {
+    return "I'm functioning normally! Thanks for asking.";
+  }
+
+  if (text.includes("who are you")) {
+    return "I'm JARVIS V7, your personal AI assistant.";
+  }
+
+  if (text.includes("electric current")) {
+    return "Electric current is the rate of flow of electric charge through a conductor. Its SI unit is ampere (A).";
+  }
+
+  return null;
+}
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
   const route = url.pathname;
@@ -439,7 +461,14 @@ location.replace("/");
       }
 
       try {
-        const reply = await askGemini(message.trim());
+        const reply = await 
+const localReply = getLocalReply(message);
+
+if (localReply) {
+  return json(200, { reply: localReply });
+}
+
+const reply = await askGemini(message.trim());
 
         return json(200, { reply });
 
