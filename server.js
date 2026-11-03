@@ -108,7 +108,7 @@ async function askGemini(message) {
 
       const retryable =
         !error.status ||
-        [ 500, 502, 503, 504].includes(error.status);
+        [500, 502, 503, 504].includes(error.status);
 
       if (!retryable || attempt === 2) {
         throw error;
